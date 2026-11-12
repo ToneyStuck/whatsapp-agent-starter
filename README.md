@@ -1,18 +1,15 @@
 # whatsapp-agent-starter
 
-Panduan dan spesifikasi untuk membangun asisten WhatsApp milik Anda sendiri dengan bantuan coding agent. Berikan repo ini kepada agent Anda, lalu biarkan agent membangun aplikasi berdasarkan kontrak, menulis tes, dan memandu konfigurasi lokal Anda.
+Blueprint dan panduan untuk coding agent yang akan membangun asisten WhatsApp sesuai pilihan operator.
 
-Metodenya **specification-driven development**: perilaku, batas fitur, dan bukti pengujian ditentukan sebelum kode aplikasi dibuat. Targetnya satu proses Node.js yang menghubungkan WhatsApp melalui Baileys, meminta jawaban ke gateway AI OpenAI-compatible, dan menyimpan konteks per chat di SQLite.
+Agent membangun satu proses Node.js yang tersambung ke WhatsApp melalui Baileys. Bot meminta jawaban ke gateway AI yang kompatibel dengan OpenAI API dan menyimpan konteks tiap chat di SQLite.
 
-**Ini bukan bot siap jalan.** Repo ini berisi dokumen dan template wizard, bukan aplikasi WhatsApp. Tidak ada `package.json` atau `src/` di sini. Agent harus membangun aplikasi di folder terpisah, bukan menjalankan `npm start` pada repo ini.
+> Repo ini bukan bot siap jalan. Tidak ada aplikasi `src/` atau `package.json` di sini. Agent membangun aplikasi di folder terpisah, mengikuti spesifikasi dan panduan dalam repo ini.
 
-## Berikan repo ini kepada agent Anda
+## Mulai di sini
 
-Anda tidak perlu menulis kode bot sendiri. Anda tetap perlu menyetujui lokasi aplikasi, memilih layanan AI, memasukkan rahasia di terminal lokal, dan menautkan akun WhatsApp.
-
-1. Unduh ZIP repo ini dan ekstrak, atau clone menggunakan URL GitHub repo yang Anda buka.
-2. Buka folder hasil unduhan di editor atau coding agent yang dapat membaca dan mengubah file lokal.
-3. Tempel instruksi berikut ke agent:
+1. Unduh repo ini atau clone dari GitHub. Buka foldernya di coding agent yang punya akses ke file dan terminal lokal.
+2. Berikan agent prompt berikut. Persetujuan Anda tetap diperlukan sebelum agent membuat aplikasi atau menjalankan tindakan di luar folder output.
 
 ```text
 Baca AGENTS.md, docs/architecture.md, dan docs/build-guide.md sampai selesai.
@@ -41,25 +38,25 @@ Laporkan bukti nyata: pisahkan tes offline, gateway live, WhatsApp live,
 dan deployment. Langkah yang belum dijalankan harus ditandai belum diverifikasi.
 ```
 
-4. Tinjau jawaban agent. Setujui folder output kosong dan keputusan konfigurasi nonrahasia.
-5. Ikuti petunjuk agent untuk menjalankan wizard di terminal aplikasi hasil build. Jangan kirim rahasia atau QR ke chat agent.
-6. Uji pesan dan restart sebelum memakai bot sehari-hari. Lulus tes offline belum membuktikan bot terhubung ke WhatsApp.
+3. Tinjau rencana agent dan pilih folder output yang kosong. Jangan izinkan agent menaruh aplikasi di repo spesifikasi.
+4. Masukkan rahasia hanya lewat wizard di terminal lokal. Jangan tempel `.env`, token, QR, atau data chat ke percakapan agent.
+5. Minta bukti tes. Tes offline tidak membuktikan koneksi gateway, pairing WhatsApp, atau deployment.
 
-Coding agent adalah alat yang membangun kode di komputer Anda. Bot WhatsApp adalah aplikasi hasil build yang nanti membalas pesan. Keduanya berbeda; berikan akses coding agent hanya pada folder dan tindakan yang diperlukan.
+Coding agent membuat aplikasi. Bot WhatsApp adalah aplikasi hasil build yang membalas pesan. Keduanya bukan hal yang sama.
 
 ## Daftar isi
 
 - [Cara kerja](#cara-kerja)
-- [Teknologi yang dipakai](#teknologi-yang-dipakai)
-- [Yang perlu disiapkan](#yang-perlu-disiapkan)
-- [Isi repo dan hasil build](#isi-repo-dan-hasil-build)
-- [Fitur dan batas cakupan](#fitur-dan-batas-cakupan)
+- [Teknologi](#teknologi)
+- [Sebelum mulai](#sebelum-mulai)
+- [Yang ada di repo ini](#yang-ada-di-repo-ini)
+- [Yang dibangun](#yang-dibangun)
 - [Konfigurasi lokal](#konfigurasi-lokal)
-- [Siapa yang boleh memakai bot](#siapa-yang-boleh-memakai-bot)
+- [Mode akses](#mode-akses)
 - [Privasi dan risiko penggunaan](#privasi-dan-risiko-penggunaan)
-- [Pengujian dan serah terima](#pengujian-dan-serah-terima)
-- [Pemeliharaan dan kontribusi](#pemeliharaan-dan-kontribusi)
-- [Lisensi dan penghargaan](#lisensi-dan-penghargaan)
+- [Verifikasi](#verifikasi)
+- [Perawatan dan kontribusi](#perawatan-dan-kontribusi)
+- [Lisensi dan kredit](#lisensi-dan-kredit)
 
 ## Cara kerja
 
@@ -81,11 +78,11 @@ Simpan pasangan pesan setelah pengiriman berhasil
 
 Satu proses Node.js menangani koneksi, antrean per chat, permintaan AI, dan penyimpanan. Tidak perlu web server, ORM, atau database server terpisah untuk rancangan ini. Detail kegagalan, reconnect, dan shutdown ada di [kontrak build](./AGENTS.md) dan [arsitektur](./docs/architecture.md).
 
-Self-hosted berarti aplikasi bot berjalan di perangkat Anda. Itu **tidak berarti model AI pasti lokal**. Gateway dapat meneruskan pesan ke provider cloud, bergantung konfigurasi Anda. WhatsApp tetap memerlukan koneksi jaringan.
+Bot berjalan di perangkat Anda, tetapi model AI belum tentu lokal. Gateway dapat meneruskan pesan ke provider cloud sesuai konfigurasi. WhatsApp tetap memerlukan jaringan.
 
-## Teknologi yang dipakai
+## Teknologi
 
-| Komponen | Peran dalam aplikasi hasil build |
+| Komponen | Peran |
 |---|---|
 | [Node.js](https://nodejs.org/) | Runtime JavaScript, ES modules, `fetch`, `--env-file`, `node:test`, dan `node:sqlite` |
 | [Baileys](https://github.com/WhiskeySockets/Baileys) | Koneksi WhatsApp melalui protokol WhatsApp Web, bukan API resmi Meta |
@@ -99,22 +96,15 @@ Minimum Node.js `>=22.13.0`; pilih major LTS yang masih didukung. Panduan memato
 
 Wizard memakai nama konfigurasi `NINEROUTER_*` dan default gateway `http://127.0.0.1:20128`. Gateway tidak disertakan atau dipasang oleh repo ini. `wa-combo` adalah ID model/combo default yang harus tersedia di gateway Anda, bukan model bawaan. Kompatibilitas gateway dan model lain perlu diuji.
 
-## Yang perlu disiapkan
+## Sebelum mulai
 
-- Coding agent dengan akses file lokal dan terminal, serta persetujuan Anda atas tindakan yang dijalankan.
-- Node.js dan npm pada perangkat pengembangan atau target.
-- Akun WhatsApp yang Anda berwenang tautkan, serta akses menu perangkat tertaut untuk scan QR.
-- Gateway AI yang menyediakan model pilihan Anda. Jika belum tersedia, agent dapat menyelesaikan build dan tes offline lebih dahulu.
-- Folder kosong untuk aplikasi hasil build, terpisah dari repo spesifikasi.
-- Koneksi jaringan serta penyimpanan persisten untuk sesi WhatsApp dan database.
+Siapkan coding agent dengan akses ke file dan terminal lokal, Node.js, akun WhatsApp yang boleh Anda tautkan, serta folder output kosong. Gateway AI bisa disiapkan belakangan, tetapi jawaban AI live belum dapat diuji sampai gateway dan model tersedia.
 
-Linux dapat dipakai untuk layanan systemd. Windows dan macOS dapat dipakai untuk pengembangan; contoh perintah kedua keluarga OS tersedia di [panduan build](./docs/build-guide.md). Unit systemd bukan layanan Windows atau macOS.
+Aplikasi memerlukan jaringan dan penyimpanan persisten untuk sesi serta database. Linux dapat menjalankan systemd; Windows dan macOS dapat dipakai untuk pengembangan. Contoh perintah ada di [panduan build](./docs/build-guide.md).
 
-Rancangan menargetkan proses kecil, termasuk perangkat berdaya rendah seperti ARM SBC. Dukungan perangkat, penggunaan RAM, dan kompatibilitas dependency tetap harus diuji pada perangkat Anda. Repo ini tidak memberikan hasil benchmark atau jaminan kompatibilitas hardware.
+Targetnya perangkat kecil, termasuk ARM SBC. Kompatibilitas perangkat dan dependency belum dijamin; uji pada perangkat tujuan. Biaya bergantung pada gateway, model, koneksi, dan hosting pilihan Anda.
 
-Biaya model, gateway, koneksi, dan hosting bergantung pilihan Anda. Tidak ada janji gratis atau selalu aktif.
-
-## Isi repo dan hasil build
+## Yang ada di repo ini
 
 | File | Kegunaan |
 |---|---|
@@ -134,11 +124,11 @@ folder-induk/
     aplikasi-output/        nama dan jalur disetujui operator, awalnya kosong
 ```
 
-Agent membuat manifest, lima modul aplikasi, tes, dan salinan wizard di folder output. Nama asisten tidak ditentukan repo; Anda memilihnya melalui `AGENT_NAME`. Bot mulai tanpa biodata, fakta keluarga, atau data pribadi bawaan.
+Agent membuat manifest, lima modul aplikasi, tes, dan salinan wizard di folder output. Anda menentukan nama asisten melalui `AGENT_NAME`. Repo ini tidak menyertakan biodata atau fakta pribadi awal.
 
-## Fitur dan batas cakupan
+## Yang dibangun
 
-Target aplikasi mencakup balasan teks, caption gambar/video sebagai teks, kutipan pesan, konteks per chat, mode akses, rate limit non-owner, heuristik jailbreak, dan sanitasi format WhatsApp. Caption tidak berarti bot memahami isi gambar atau video.
+Bot membalas pesan teks dan dapat memakai caption gambar atau video sebagai teks. Bot tidak memproses isi media. Kutipan pesan dapat ikut menjadi konteks, dengan riwayat chat yang disimpan terpisah. Aplikasi menerapkan mode akses, rate limit untuk non-owner, pemeriksaan jailbreak berbasis pola, dan sanitasi format WhatsApp.
 
 Hanya dua perintah:
 
@@ -167,7 +157,7 @@ Di terminal **aplikasi hasil build**, operator menjalankan `npm run setup`. Wiza
 
 `npm run setup:check` memeriksa konfigurasi secara offline dengan nilai masked. `npm run setup:gateway` memeriksa koneksi dan keberadaan model. Keduanya perintah aplikasi hasil build, bukan repo sumber. Startup harus menolak `AGENT_NAME` atau `OWNER_NUMBER` yang hilang.
 
-## Siapa yang boleh memakai bot
+## Mode akses
 
 | Mode | Pesan yang dilayani |
 |---|---|
@@ -192,7 +182,7 @@ Riwayat default menyimpan hingga 20 pesan per chat, dengan TTL 7 hari dan pember
 
 Baileys adalah integrasi tidak resmi. Perubahan protokol atau kebijakan WhatsApp dapat memutus koneksi atau menyebabkan pembatasan akun. Repo ini tidak berafiliasi dengan atau didukung oleh WhatsApp/Meta. Gunakan hanya akun yang Anda berwenang operasikan; jangan gunakan untuk spam.
 
-## Pengujian dan serah terima
+## Verifikasi
 
 Tes template dapat dijalankan di repo ini tanpa konfigurasi operator, gateway, atau WhatsApp:
 
@@ -218,13 +208,13 @@ Minta agent menyerahkan bukti dalam kelompok terpisah:
 
 Langkah yang belum dijalankan harus tertulis **belum diverifikasi**, bukan dianggap lulus. QR hanya ditampilkan di terminal lokal tepercaya, bukan log service atau chat agent. Panduan lengkap dan gate tiap fase ada di [panduan build dan operasi](./docs/build-guide.md).
 
-## Pemeliharaan dan kontribusi
+## Perawatan dan kontribusi
 
-Simpan spesifikasi terpisah dari instalasi pribadi agar perubahan panduan tidak membawa sesi atau database ke repo publik. Backup, restore, update dependency, dan uninstall dijelaskan di [panduan operasi](./docs/build-guide.md#fase-8--operasi). Tinjau perubahan dan jalankan tes sebelum mengganti versi pada perangkat yang dipakai sehari-hari.
+Jaga repo spesifikasi tetap terpisah dari instalasi bot agar sesi dan database tidak ikut terpublikasi. [Panduan operasi](./docs/build-guide.md#fase-8--operasi) menjelaskan backup, restore, pembaruan dependency, dan penghapusan aplikasi. Uji pembaruan sebelum memasangnya pada perangkat utama.
 
-Untuk berkontribusi, jelaskan perubahan perilaku, perbarui kontrak dan panduan yang terkait, lalu jalankan tes wizard bila templatenya berubah. Jangan sertakan nomor asli, token, QR, isi chat, sesi, atau database pada issue maupun pull request. Gunakan reproduksi sintetis; samarkan log sebelum membagikannya.
+Kontribusi yang mengubah perilaku perlu memperbarui kontrak dan panduan terkait. Jika mengubah wizard, jalankan tesnya. Untuk issue atau pull request, gunakan data sintetis. Jangan sertakan nomor telepon, token, QR, isi chat, sesi, atau database.
 
-## Lisensi dan penghargaan
+## Lisensi dan kredit
 
 Materi repo ini menggunakan [MIT License](./LICENSE). Anda dapat memakai, menyalin, mengubah, dan mendistribusikannya, termasuk secara komersial, dengan mempertahankan pemberitahuan hak cipta dan teks lisensi pada salinan atau bagian substansialnya. Materi diberikan tanpa garansi. Pemberitahuan hak cipta yang sudah ada tetap dipertahankan meskipun nama repo berubah.
 

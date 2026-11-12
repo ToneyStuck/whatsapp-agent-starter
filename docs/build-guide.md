@@ -77,7 +77,7 @@ npm i --save-exact @whiskeysockets/baileys@7.0.0-rc14 qrcode-terminal pino
 
 Gate manifest: periksa `package.json` dan pastikan versi dependency exact, tanpa `^`/`~`; perintah install memakai `--save-exact`. Pin Baileys tepat `7.0.0-rc14` karena opsi dapat berubah antar release candidate. Ini release candidate, bukan jaminan kompatibilitas ARM atau native bridge. Jangan memakai `latest` atau range tanpa uji. Tidak memakai dotenv; gunakan `node --env-file=.env`. Lockfile dari `npm install` boleh di-commit jika tidak memuat rahasia.
 
-Pertahankan pemberitahuan hak cipta dan lisensi MIT saat menyalin materi repo. Sebelum mendistribusikan hasil build, periksa lisensi versi dependency langsung dan transitif yang terpasang, lalu sertakan lisensi, atribusi, dan NOTICE bila diwajibkan. Jangan menganggap semua dependency memakai MIT: qrcode-terminal memakai Apache-2.0. Lihat [lisensi dan penghargaan](../README.md#lisensi-dan-penghargaan).
+Pertahankan pemberitahuan hak cipta dan lisensi MIT saat menyalin materi repo. Sebelum mendistribusikan hasil build, periksa lisensi versi dependency langsung dan transitif yang terpasang, lalu sertakan lisensi, atribusi, dan NOTICE bila diwajibkan. Jangan menganggap semua dependency memakai MIT: qrcode-terminal memakai Apache-2.0. Lihat [lisensi dan kredit](../README.md#lisensi-dan-kredit).
 
 **Gate 1:** jalankan `node -v` dan `npm -v`; pastikan Node `>=22.13.0`; `.gitignore` ada sebelum sumber disalin; folder kosong sudah dikonfirmasi; tidak ada `.env`.
 

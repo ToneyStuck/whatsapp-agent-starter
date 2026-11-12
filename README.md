@@ -1,5 +1,9 @@
 # whatsapp-agent-starter
 
+[![Jenis: spesifikasi](https://img.shields.io/badge/jenis-spesifikasi-2563eb)](./AGENTS.md)
+[![Target: Node.js >=22.13.0](https://img.shields.io/badge/target-Node.js%20%3E%3D22.13.0-417e38)](#teknologi)
+[![Lisensi: MIT](https://img.shields.io/github/license/ToneyStuck/whatsapp-agent-starter)](./LICENSE)
+
 Blueprint dan panduan untuk coding agent yang akan membangun asisten WhatsApp sesuai pilihan operator.
 
 Agent membangun satu proses Node.js yang tersambung ke WhatsApp melalui Baileys. Bot meminta jawaban ke gateway AI yang kompatibel dengan OpenAI API dan menyimpan konteks tiap chat di SQLite.
